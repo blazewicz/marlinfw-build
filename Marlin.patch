@@ -1,0 +1,11 @@
+--- Marlin/Configuration.h	2021-06-02 16:01:21.000000000 +0200
++++ Marlin/Configuration.h	2021-06-02 12:06:13.000000000 +0200
+@@ -813,7 +813,7 @@
+  * Override with M92
+  *                                      X, Y, Z, E0 [, E1[, E2...]]
+  */
+-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 93 }
++#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80.0, 80.6, 405.0, 93.0 }
+
+ /**
+  * Default Max Feed Rate (mm/s)

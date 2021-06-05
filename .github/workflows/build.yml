@@ -7,40 +7,55 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      RELEASE: 2.0.8.2
+
     steps:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: '3.7'
           architecture: 'x64'
-      
+
       - name: Setup PlatformIO
         run: |
           pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
           platformio update
 
-      - name: clone Marlin firmware
+      - name: Clone Marlin firmware
         uses: actions/checkout@v2
         with:
           repository: MarlinFirmware/Marlin
+          ref: ${{ env.RELEASE }}
 
-      - name: clone Marlin configurations
+      - name: Clone Marlin configurations
         uses: actions/checkout@v2
         with:
           repository: MarlinFirmware/Configurations
+          ref: ${{ env.RELEASE }}
           path: Configurations
 
       - name: Copy Ender 3 V2 config files
         run: |
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/{Configuration.h,Configuration_adv.h,_Bootscreen.h,_Statusscreen.h}' Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration.h' Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration_adv.h' Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Bootscreen.h' Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Statusscreen.h' Marlin/
+
+      - name: Apply source patch
+        run: patch -p0 < Marlin.patch
 
       - name: Build Marlin
-        run: |
-          platformio run -t STM32F103RET6_creality
+        run: platformio run -e STM32F103RET6_creality
 
-      - name: Archive firmware image
+      - name: Copy release files
+        run: |
+          mkdir -p release
+          cp -r 'Configurations/config/examples/Creality/Ender-3 V2/DWIN_SET' release/
+          cp .pio/build/STM32F103RET6_creality/firmware-*.bin release/
+
+      - name: Archive firmware
         uses: actions/upload-artifact@v2
         with:
-          name: firmware.bin
-          path: .pio/build/STM32F103RET6_creality/firmware-*.bin
-  
+          name: firmware
+          path: release/*
