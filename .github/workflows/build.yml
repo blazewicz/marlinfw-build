@@ -11,19 +11,31 @@ jobs:
       RELEASE: 2.0.8.2
 
     steps:
+      - name: Prepare build repository
+        uses: actions/checkout@v2
+
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: '3.7'
           architecture: 'x64'
 
-      - name: Setup PlatformIO
-        run: |
-          pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
-          platformio update
+      - name: Setup cache for pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
 
-      - name: Prepare repo
-        uses: actions/checkout@v2
+      - name: Setup cache for PlatformIO user files
+        uses: actions/cache@v2
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-platformio
+
+      - name: Install PlatformIO
+        run: |
+          pip install -r requirements.txt
+          platformio update
 
       - name: Clone Marlin firmware
         uses: actions/checkout@v2
