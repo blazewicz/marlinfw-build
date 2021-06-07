@@ -41,13 +41,13 @@ jobs:
 
       - name: Copy Ender 3 V2 config files
         run: |
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration.h' Marlin/Marlin/
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration_adv.h' Marlin/Marlin/
+          cp Configuration.h Marlin/Marlin/
+          cp Configuration_adv.h Marlin/Marlin/
           cp 'Configurations/config/examples/Creality/Ender-3 V2/_Bootscreen.h' Marlin/Marlin/
           cp 'Configurations/config/examples/Creality/Ender-3 V2/_Statusscreen.h' Marlin/Marlin/
 
       - name: Apply source patch
-        run: patch -p0 < Marlin.patch
+        run: patch -p1 < Marlin.patch
 
       - name: Build Marlin
         run: cd Marlin && platformio run -e STM32F103RET6_creality
