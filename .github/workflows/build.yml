@@ -22,11 +22,15 @@ jobs:
           pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
           platformio update
 
+      - name: Prepare repo
+        uses: actions/checkout@v2
+
       - name: Clone Marlin firmware
         uses: actions/checkout@v2
         with:
           repository: MarlinFirmware/Marlin
           ref: ${{ env.RELEASE }}
+          path: Marlin
 
       - name: Clone Marlin configurations
         uses: actions/checkout@v2
@@ -37,22 +41,22 @@ jobs:
 
       - name: Copy Ender 3 V2 config files
         run: |
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration.h' Marlin/
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration_adv.h' Marlin/
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Bootscreen.h' Marlin/
-          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Statusscreen.h' Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration.h' Marlin/Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/Configuration_adv.h' Marlin/Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Bootscreen.h' Marlin/Marlin/
+          cp 'Configurations/config/examples/Creality/Ender-3 V2/_Statusscreen.h' Marlin/Marlin/
 
       - name: Apply source patch
         run: patch -p0 < Marlin.patch
 
       - name: Build Marlin
-        run: platformio run -e STM32F103RET6_creality
+        run: cd Marlin && platformio run -e STM32F103RET6_creality
 
       - name: Copy release files
         run: |
           mkdir -p release
           cp -r 'Configurations/config/examples/Creality/Ender-3 V2/DWIN_SET' release/
-          cp .pio/build/STM32F103RET6_creality/firmware-*.bin release/
+          cp Marlin/.pio/build/STM32F103RET6_creality/firmware-*.bin release/
 
       - name: Archive firmware
         uses: actions/upload-artifact@v2

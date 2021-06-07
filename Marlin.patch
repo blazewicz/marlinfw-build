@@ -1,5 +1,5 @@
---- Marlin/Configuration.h	2021-06-02 16:01:21.000000000 +0200
-+++ Marlin/Configuration.h	2021-06-02 12:06:13.000000000 +0200
+--- Marlin/Marlin/Configuration.h	2021-06-02 16:01:21.000000000 +0200
++++ Marlin/Marlin/Configuration.h	2021-06-02 12:06:13.000000000 +0200
 @@ -813,7 +813,7 @@
   * Override with M92
   *                                      X, Y, Z, E0 [, E1[, E2...]]
